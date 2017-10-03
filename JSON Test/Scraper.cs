@@ -13,7 +13,7 @@ namespace JSON_Test
     {
         public static void ScrapeXIVHuntAPI()
         {
-            string urlAddress = "https://xivhunt.net/api/worlds";            
+            string urlAddress = "https://xivhunt.net/api/worlds/93";            
            
             try
             {
@@ -37,8 +37,11 @@ namespace JSON_Test
                                     // Pulls the text of the page and puts it into currentData
                                     string currentData = readStream.ReadLine();
 
-                                    // This returns null and throws an exception.
-                                    var worlds = JsonConvert.DeserializeObject<Rootobject>(currentData);
+                                    // This returns all world information (for /api/worlds)
+                                    var worlds = JsonConvert.DeserializeObject<List<Worlds>>(currentData);
+
+                                    // If you want to specify a particular world (for ex. /api/worlds/93)
+                                    // var world = JsonConvert.DeserializeObject<Worlds>(currentData);
 
                                 }
                             }
@@ -56,27 +59,30 @@ namespace JSON_Test
             }
         }
     }
-
-    public class Rootobject
-    {
-        public Class1[] Property1 { get; set; }
-    }
-
-    public class Class1
+        
+    public class Worlds
     {
         public int id { get; set; }
-        public Hunt[] hunts { get; set; }
+        public List<Hunt> hunts { get; set; }
     }
 
     public class Hunt
     {
         public int wId { get; set; }
         public int id { get; set; }
-        public int r { get; set; }
+        //public HuntRank r { get; set; }
+        [JsonProperty("r")]
+        public HuntRank Rank { get; set; }
         public DateTime lastReported { get; set; }
         public int instance { get; set; }
         public float x { get; set; }
         public float y { get; set; }
         public bool lastAlive { get; set; }
+        public enum HuntRank
+        {
+            B,
+            A,
+            S
+        }
     }
 }
